@@ -54,8 +54,9 @@ their squares.
 Explanation: @sumOfSquares 3 4@ should be equal to @9 + 16@ and this
 is 25.
 -}
+
 sumOfSquares :: Num a => a -> a -> a
-sumOfSquares x y = x^2 + y^2
+sumOfSquares x y = x ^ (2 :: Int) + y ^ (2 :: Int)
 
 {- | Implement a function that returns the last digit of a given number.
 
@@ -106,8 +107,10 @@ string.
 -}
 subString :: Int -> Int -> String -> String
 subString start end str =
-  let duration = end - start + 1
-   in take duration $ drop start str
+  let end' = if end < 0 then 0 else end + 1
+      start' = if start < 0  then 0 else start
+      duration = end' - start' 
+   in take duration $ drop start' str
 
 {- | Write a function that takes a String — space separated numbers,
 and finds a sum of the numbers inside this string.
@@ -135,9 +138,9 @@ and lower than 6 elements (4, 5, 6, 7, 8 and 9).
 -}
 lowerAndGreater ::  Int -> [Int] -> String
 lowerAndGreater n list =
-  show n ++ " is greater than " ++ show gt ++ " elements and lower than " ++ show lt ++ " elements"
+  show n ++ " is greater than " ++ show gtX ++ " elements and lower than " ++ show ltX ++ " elements"
   where
-    (lt, gt) = go (0, 0) list :: (Int, Int)
+    (ltX, gtX) = go (0, 0) list :: (Int, Int)
     go ::  (Int, Int) -> [Int] -> (Int, Int)
     go p [] = p
     go (lt, gt) (x : xs)
