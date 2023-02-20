@@ -182,6 +182,7 @@ data Dragon = Dragon
   { dragonType :: DragonType,
     dragonAttack :: Int,
     dragonHealth :: Int,
+    dragonExpValue :: Int,
     dragonInventory :: [Item]
   }
   deriving (Show)
@@ -192,26 +193,28 @@ data TreasureType = EyeGem | ClawRing | RoarAmulet deriving (Show)
 
 data Item = Gold Int | Treasure TreasureType Int deriving (Show)
 
-data FightResult = Victory | Defeat | Escape deriving (Show)
+data FightResult = Victory Knight | Defeat | Escape deriving (Show)
 
--- dr1 = Dragon Red 10 100 []
--- kn1 = Knight 10 2 10 100 []
+-- dr1 = Dragon Red 10 100 100 [Gold 200, Treasure ClawRing 1]
+-- kn1 = Knight 10 2 10 500 [Gold 40]
 
 dragonFight :: Knight -> Dragon -> FightResult
 dragonFight = go 1
   where 
     go :: Int -> Knight -> Dragon -> FightResult
     go n k d
-      | knightHealth k <= 0 = Defeat
+      | knightHealth k <= 0 = Defeat  
       | knightEndurance k <= 0 = Escape 
-      | dragonHealth d <= 0 = Victory
+      --                                                  -- TODO: merge lists of Items properly
+      | dragonHealth d <= 0 = Victory (k {knightInventory = (knightInventory k) ++ (dragonInventory d),
+                                          knightExperience = (knightExperience k) + (dragonExpValue d)})
       -- dragon attack:
       | mod n 11 == 0 = go (n + 1) 
                            (k {knightHealth = (knightHealth k) - (dragonAttack d)}) 
                            d 
       -- knight attack:
       | otherwise = go (n + 1) 
-                       k 
+                       (k {knightEndurance = (knightEndurance k) - 1}) 
                        (d {dragonHealth = (dragonHealth d) - (knightAttack k)})
 
 ----------------------------------------------------------------------------
